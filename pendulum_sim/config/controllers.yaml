@@ -1,0 +1,10 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 20
+    pivot_effort_controller:
+      type: effort_controllers/JointGroupEffortController
+
+pivot_effort_controller:
+  ros__parameters:
+    joints:
+      - pivot

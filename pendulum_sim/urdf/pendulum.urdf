@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<robot name="pendulum">
+
+  <!-- World anchor point -->
+  <link name="world"/>
+
+  <!-- Pivot joint - this is what swings -->
+  <joint name="pivot" type="revolute">
+    <parent link="world"/>
+    <child link="rod"/>
+    <origin xyz="0 0 1.0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="5"/>
+    <dynamics damping="0.01"/>
+  </joint>
+
+  <!-- Rod link -->
+  <link name="rod">
+    <visual>
+      <origin xyz="0 0 -0.4" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.02" length="0.8"/>
+      </geometry>
+      <material name="grey">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.4"/>
+      <geometry>
+        <cylinder radius="0.02" length="0.8"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 -0.4" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.02683" ixy="0" ixz="0"
+                             iyy="0.02683" iyz="0"
+                                           izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <!-- Fixed joint connecting rod to bob -->
+  <joint name="bob_fixed" type="fixed">
+    <parent link="rod"/>
+    <child link="bob"/>
+    <origin xyz="0 0 -0.8"/>
+  </joint>
+
+  <!-- Bob - the heavy ball at the tip -->
+  <link name="bob">
+    <visual>
+      <geometry>
+        <sphere radius="0.08"/>
+      </geometry>
+      <material name="red">
+        <color rgba="0.8 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.08"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="0.00256" ixy="0" ixz="0"
+                             iyy="0.00256" iyz="0"
+                                           izz="0.00256"/>
+    </inertial>
+  </link>
+
+  <!-- ========== ros2_control ========== -->
+  <ros2_control name="pendulum_control" type="system">
+  <hardware>
+    <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+  </hardware>
+  <joint name="pivot">
+    <command_interface name="effort">
+      <param name="min">-10</param>
+      <param name="max">10</param>
+    </command_interface>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+  </joint>
+</ros2_control>
+
+<gazebo>
+  <plugin filename="libgz_ros2_control-system.so"
+          name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+    <parameters>$(find pendulum_sim)/config/controllers.yaml</parameters>
+  </plugin>
+</gazebo>
+
+</robot>
