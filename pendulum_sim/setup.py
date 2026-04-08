@@ -28,7 +28,7 @@ setup(
     license='MIT',
     entry_points={
         'console_scripts': [
-            'pendulum_oscillator = pendulum_sim.pendulum_simulator:main',
+            'pendulum_oscillator = pendulum_sim.pendulum_oscillator:main',
             'bob_detector = pendulum_sim.bob_detector:main',
         ],
     },
